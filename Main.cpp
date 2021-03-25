@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <time.h>
+#include "Node.h"
 
 
 using namespace std;
@@ -34,13 +35,19 @@ vector<vector<int> > ConstructIntGrid()
     return grid;
 }
 
+void BestFirstSearch(Node* StartNode, Node* EndNode)
+{
+    
+
+}
+
 void ShowGrid(vector<vector<int> > g)
 {
-    int size = g.size();
+    int Size = g.size();
     
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < Size; i++)
     {
-        for(int j = 0; j < size; j++)
+        for(int j = 0; j < Size; j++)
         {
             cout << g[i][j] << " ";
         }
@@ -53,5 +60,10 @@ int main(int argc, char *argv[]) {
     vector<vector<int> > MainGrid = ConstructIntGrid();
     
     ShowGrid(MainGrid);
+
+    Node* node = new Node(NULL, Rand(0, 10));
+
+    node->Print();
+
     
 }
