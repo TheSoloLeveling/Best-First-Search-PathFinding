@@ -1,7 +1,10 @@
-
 #include <iostream>
 #include "Node.h"
 
+Node::Node()
+{
+    this->H = 0;
+}
 
 Node::Node(Node* Parent, float H)
 {
@@ -14,7 +17,3 @@ void Node::Print()
     std::cout << "Its working !!!";   // For Debug
 }
 
-float Node::GetH()
-{
-    return this->H;
-}

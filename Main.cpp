@@ -33,6 +33,7 @@ vector<vector<Node*> > ConstructIntGrid()
         }
         grid.push_back(v);
     }
+    
     return grid;
 }
 
@@ -50,9 +51,51 @@ void ShowGrid(vector<vector<Node*> > g)
     }
 }
 
-void BestFirstSearch(Node* StartNode, Node* EndNode)
+void SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
+{
+    int Size = g.size();
+    Node* data;
+
+    for(int i = 0; i < Size; i++)
+    {
+        for(int j = 0; j < Size; j++)
+        {
+            if (g[i][j] == n)
+            {
+                data = n;
+                continue;
+            }           
+        }
+    }
+
+    
+
+}
+
+void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 {
     Node* CurrentNode = StartNode;
+
+    int Size = g.size();
+    int In, Jn;
+
+    for(int i = 0; i < Size; i++)
+    {
+        for(int j = 0; j < Size; j++)
+        {
+            if (g[i][j] == CurrentNode)
+            {
+                In = i;
+                Jn = j;
+                continue;
+            }           
+        }
+    }
+
+    g[In+1][Jn]->SetParent(CurrentNode);
+    g[In-1][Jn]->SetParent(CurrentNode);
+    g[In][Jn+1]->SetParent(CurrentNode);
+    g[In][Jn-1]->SetParent(CurrentNode);
 
 }
 
@@ -63,9 +106,21 @@ int main(int argc, char *argv[]) {
     
     ShowGrid(MainGrid);
 
-    Node* node = new Node(NULL, Rand(0, 10));
+    int Size = MainGrid.size();
+    
+    
+    BestFirstSearch(MainGrid, MainGrid[0][0], MainGrid[Size-1][Size-1]);
 
-    node->Print();
+    
+    for(int i = 0; i < Size; i++)
+    {
+        for(int j = 0; j < Size; j++)
+        {
+            cout <<  MainGrid[i][j]->GetParent();        
+        }
+        cout << "\n";
+    }
 
+    
     
 }
