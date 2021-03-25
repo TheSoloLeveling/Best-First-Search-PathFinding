@@ -9,6 +9,7 @@ class Node
     public:
         Node(Node* Parent, float H);
         void Print();
+        float GetH();
 
 
 };

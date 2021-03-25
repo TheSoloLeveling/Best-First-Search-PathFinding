@@ -11,5 +11,10 @@ Node::Node(Node* Parent, float H)
 
 void Node::Print() 
 {
-    std::cout << "Its working !!!";
+    std::cout << "Its working !!!";   // For Debug
+}
+
+float Node::GetH()
+{
+    return this->H;
 }

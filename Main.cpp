@@ -13,9 +13,9 @@ int Rand(int a, int b)
     return nRand;
 }
 
-vector<vector<int> > ConstructIntGrid()
+vector<vector<Node*> > ConstructIntGrid()
 {
-    vector<vector<int> > grid;
+    vector<vector<Node*> > grid;
 
     int size;
 
@@ -25,23 +25,18 @@ vector<vector<int> > ConstructIntGrid()
 
     for(int i = 0; i < size; i++)
     {
-        vector<int> v;
+        vector<Node*> v;
         for(int j = 0; j < size; j++)
         {
-            v.push_back(Rand(1, 10));
+            Node* data = new Node(NULL, Rand(1, 10));
+            v.push_back(data);
         }
         grid.push_back(v);
     }
     return grid;
 }
 
-void BestFirstSearch(Node* StartNode, Node* EndNode)
-{
-    
-
-}
-
-void ShowGrid(vector<vector<int> > g)
+void ShowGrid(vector<vector<Node*> > g)
 {
     int Size = g.size();
     
@@ -49,15 +44,22 @@ void ShowGrid(vector<vector<int> > g)
     {
         for(int j = 0; j < Size; j++)
         {
-            cout << g[i][j] << " ";
+            cout << g[i][j]->GetH() << " ";
         }
         cout << "\n";
     }
 }
 
+void BestFirstSearch(Node* StartNode, Node* EndNode)
+{
+    Node* CurrentNode = StartNode;
+
+}
+
+
 int main(int argc, char *argv[]) {
 
-    vector<vector<int> > MainGrid = ConstructIntGrid();
+    vector<vector<Node*> > MainGrid = ConstructIntGrid();
     
     ShowGrid(MainGrid);
 
