@@ -51,39 +51,16 @@ void ShowGrid(vector<vector<Node*> > g)
     }
 }
 
-void SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
+vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
 {
     int Size = g.size();
-    Node* data;
+    int In,Jn;
 
     for(int i = 0; i < Size; i++)
     {
         for(int j = 0; j < Size; j++)
         {
             if (g[i][j] == n)
-            {
-                data = n;
-                continue;
-            }           
-        }
-    }
-
-    
-
-}
-
-void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
-{
-    Node* CurrentNode = StartNode;
-
-    int Size = g.size();
-    int In, Jn;
-
-    for(int i = 0; i < Size; i++)
-    {
-        for(int j = 0; j < Size; j++)
-        {
-            if (g[i][j] == CurrentNode)
             {
                 In = i;
                 Jn = j;
@@ -92,10 +69,47 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
         }
     }
 
-    g[In+1][Jn]->SetParent(CurrentNode);
-    g[In-1][Jn]->SetParent(CurrentNode);
-    g[In][Jn+1]->SetParent(CurrentNode);
-    g[In][Jn-1]->SetParent(CurrentNode);
+    vector<Node*> v;
+
+    try
+    {
+        g.at(In+1).at(Jn);
+        v.push_back(g[In+1][Jn]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In-1).at(Jn);
+        v.push_back(g[In-1][Jn]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In).at(Jn+1);
+        v.push_back(g[In][Jn+1]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In).at(Jn-1);
+        v.push_back(g[In][Jn-1]);
+    }
+    catch(const std::exception& e) {}
+    
+    return v;
+}
+
+void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
+{
+    Node* CurrentNode = StartNode;
+
+    vector<Node*> v = SearchAdjacentNodes(g, CurrentNode);
+
+    /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
+    for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
 
 }
 
@@ -109,18 +123,6 @@ int main(int argc, char *argv[]) {
     int Size = MainGrid.size();
     
     
-    BestFirstSearch(MainGrid, MainGrid[0][0], MainGrid[Size-1][Size-1]);
-
-    
-    for(int i = 0; i < Size; i++)
-    {
-        for(int j = 0; j < Size; j++)
-        {
-            cout <<  MainGrid[i][j]->GetParent();        
-        }
-        cout << "\n";
-    }
-
-    
+    BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
     
 }
