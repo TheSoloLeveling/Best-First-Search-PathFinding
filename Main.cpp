@@ -7,6 +7,39 @@
 
 using namespace std;
 
+struct BST
+{
+    BST* LeftChild;
+    Node* Data;
+    BST* RightChild;
+};
+
+struct BST* Insert(struct BST *Bst, Node* n)
+{
+    if (Bst == NULL) 
+    {
+        struct BST* temp = (struct BST*)malloc(sizeof(struct BST));
+        temp->Data->SetH(n->GetH());
+        temp->LeftChild = temp->RightChild = NULL;
+        return temp;
+    }
+    if (n->GetH() < Bst->Data->GetH())
+        Bst->LeftChild = Insert(Bst->LeftChild, n);
+    else
+        Bst->RightChild = Insert(Bst->RightChild, n);
+    return Bst;    
+}
+
+void Inorder(struct BST* p)
+{
+    if(p)
+    {
+        Inorder(p->LeftChild);
+        std::cout << p->Data->GetH() << " ";
+        Inorder(p->RightChild);
+    }
+}
+
 int Rand(int a, int b)
 {
     int nRand = a + (int) ((float) rand() * (b-a+1) / (RAND_MAX-1));
@@ -111,6 +144,7 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
     /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
     for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
 
+
 }
 
 
@@ -119,10 +153,22 @@ int main(int argc, char *argv[]) {
     vector<vector<Node*> > MainGrid = ConstructIntGrid();
     
     ShowGrid(MainGrid);
+    std::cout << endl;
 
     int Size = MainGrid.size();
     
     
-    BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
+    //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
+
+    struct BST* ClosedSet = Insert(ClosedSet, new Node(NULL, 10));
+    ClosedSet = Insert(ClosedSet, new Node(NULL, 5));
+    ClosedSet = Insert(ClosedSet, new Node(NULL, 20));
+    ClosedSet = Insert(ClosedSet, new Node(NULL, 8));
+    ClosedSet = Insert(ClosedSet, new Node(NULL, 30));
+
+    Inorder(ClosedSet);
+    
+
+    return 0;
     
 }

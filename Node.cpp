@@ -4,6 +4,7 @@
 Node::Node()
 {
     this->H = 0;
+    this->Parent = NULL;
 }
 
 Node::Node(Node* Parent, float H)
