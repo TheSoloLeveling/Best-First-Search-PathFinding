@@ -14,12 +14,13 @@ struct BST
     BST* RightChild;
 };
 
-struct BST* Insert(struct BST *Bst, Node* n)
+struct BST* Insert(struct BST* Bst, Node* n)
+
 {
     if (Bst == NULL) 
     {
         struct BST* temp = (struct BST*)malloc(sizeof(struct BST));
-        temp->Data->SetH(n->GetH());
+        temp->Data = new Node(NULL, n->GetH());
         temp->LeftChild = temp->RightChild = NULL;
         return temp;
     }
@@ -28,6 +29,17 @@ struct BST* Insert(struct BST *Bst, Node* n)
     else
         Bst->RightChild = Insert(Bst->RightChild, n);
     return Bst;    
+}
+
+struct BST* Search(struct BST* Bst, Node* n)
+{
+    if(Bst == NULL || Bst->Data->GetH() == n->GetH())
+        return Bst;
+
+    if(Bst->Data->GetH() < n->GetH())
+        return Search(Bst->RightChild, n);
+
+    return Search(Bst->LeftChild, n);
 }
 
 void Inorder(struct BST* p)
@@ -93,7 +105,7 @@ vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
     {
         for(int j = 0; j < Size; j++)
         {
-            if (g[i][j] == n)
+            if(g[i][j] == n)
             {
                 In = i;
                 Jn = j;
@@ -144,7 +156,19 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
     /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
     for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
 
+    struct BST* ClosedSet = Insert(ClosedSet, CurrentNode);
 
+    vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
+
+    for(int i = 0; i < neighbors.size(); i++)
+    {
+        if(Search(ClosedSet, neighbors[i]))
+            continue;
+        else
+        {
+            
+        }
+    }
 }
 
 
@@ -160,13 +184,7 @@ int main(int argc, char *argv[]) {
     
     //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
 
-    struct BST* ClosedSet = Insert(ClosedSet, new Node(NULL, 10));
-    ClosedSet = Insert(ClosedSet, new Node(NULL, 5));
-    ClosedSet = Insert(ClosedSet, new Node(NULL, 20));
-    ClosedSet = Insert(ClosedSet, new Node(NULL, 8));
-    ClosedSet = Insert(ClosedSet, new Node(NULL, 30));
-
-    Inorder(ClosedSet);
+    
     
 
     return 0;
