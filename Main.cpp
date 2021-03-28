@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <vector>
 #include <time.h>
+#include <queue>
 #include "Node.h"
 
 
@@ -31,15 +32,27 @@ struct BST* Insert(struct BST* Bst, Node* n)
     return Bst;    
 }
 
-struct BST* Search(struct BST* Bst, Node* n)
+struct BST* BST_Search(struct BST* Bst, Node* n)
 {
     if(Bst == NULL || Bst->Data->GetH() == n->GetH())
         return Bst;
 
     if(Bst->Data->GetH() < n->GetH())
-        return Search(Bst->RightChild, n);
+        return BST_Search(Bst->RightChild, n);
 
-    return Search(Bst->LeftChild, n);
+    return BST_Search(Bst->LeftChild, n);
+}
+
+bool Queue_Search(priority_queue<Node*> p, Node* n)
+{
+    priority_queue<Node*> temp = p;
+    while(!temp.empty())
+    {
+        if (temp.top()->GetH() == n->GetH())
+            return true;
+        temp.pop();
+    }
+    return false;
 }
 
 void Inorder(struct BST* p)
@@ -160,15 +173,26 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 
     vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
 
+    priority_queue<Node*> OpenSet;
+
     for(int i = 0; i < neighbors.size(); i++)
     {
-        if(Search(ClosedSet, neighbors[i]))
+        if(BST_Search(ClosedSet, neighbors[i]) != NULL)
             continue;
         else
         {
-            
+            neighbors[i]->SetParent(CurrentNode);
+            if(!Queue_Search(OpenSet, neighbors[i]))
+            {
+                OpenSet.push(neighbors[i]);
+            }
         }
     }
+
+    //if(OpenSet.empty())
+       // break;
+    
+    
 }
 
 
@@ -184,9 +208,17 @@ int main(int argc, char *argv[]) {
     
     //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
 
-    
-    
+    priority_queue<Node*> O;
+    O.push(new Node(NULL, 40));
+    O.push(new Node(NULL, 90));
+    O.push(new Node(NULL, 10));
+    O.push(new Node(NULL, 30));
+    //std::cout << "Before : " << O.top()->GetH() << endl;
 
-    return 0;
-    
+    while (!O.empty())
+    {
+        std::cout << O.top()->GetH() << endl;
+        O.pop();
+    }
+    //std::cout << "After : " << O.top()->GetH();*/
 }
