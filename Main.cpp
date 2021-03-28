@@ -66,6 +66,19 @@ Node* LowestQueueNode(priority_queue<Node*, vector<Node*> , Node> o)
     return p;
 }
 
+priority_queue<Node*, vector<Node*> , Node> DeleteQueueNode(priority_queue<Node*, vector<Node*> , Node> p, Node* n)
+{
+    priority_queue<Node*, vector<Node*>, Node> O;
+    while(!p.empty())
+    {
+        if (p.top()->GetH() == n->GetH())
+            p.pop();
+        O.push(p.top());
+        p.pop();
+    }
+    return O;
+}
+
 void Inorder(struct BST* p)
 {
     if(p)
@@ -175,6 +188,7 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 {
     Node* CurrentNode = StartNode;
     struct BST* ClosedSet = Insert(ClosedSet, CurrentNode);
+    priority_queue<Node*, vector<Node*>, Node> OpenSet;
 
     do
     {
@@ -182,8 +196,6 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 
         /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
         for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
-
-        priority_queue<Node*, vector<Node*>, Node> OpenSet;
 
         vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
 
@@ -205,14 +217,11 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
             break;
         
         CurrentNode = LowestQueueNode(OpenSet);
-        // remove current node from openset
+        OpenSet = DeleteQueueNode(OpenSet, CurrentNode);
         ClosedSet = Insert(ClosedSet, CurrentNode);
 
     } while (CurrentNode == EndNode);
 }
-
-
-
 
 int main(int argc, char *argv[]) {
 
@@ -226,13 +235,21 @@ int main(int argc, char *argv[]) {
     
     //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
 
-/*
+
     priority_queue<Node*, vector<Node*>, Node> O;
     O.push(new Node(NULL, 40));
     O.push(new Node(NULL, 90));
     O.push(new Node(NULL, 10));
     O.push(new Node(NULL, 30));
 
-    std::cout << LowestQueueNode(O)->GetH();
+    /*
+    O = DeleteQueueNode(O, new Node(NULL, 30));
+    while(!O.empty())
+    {
+        cout << O.top()->GetH() << endl;
+        O.pop();
+    }
     */
+    
+    
 }
