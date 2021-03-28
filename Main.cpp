@@ -16,20 +16,24 @@ struct BST
 };
 
 struct BST* Insert(struct BST* Bst, Node* n)
-
 {
     if (Bst == NULL) 
     {
         struct BST* temp = (struct BST*)malloc(sizeof(struct BST));
+        
         temp->Data = new Node(NULL, n->GetH());
+        
         temp->LeftChild = temp->RightChild = NULL;
+        
         return temp;
     }
-    if (n->GetH() < Bst->Data->GetH())
+    
+    if (n->GetH() < Bst->Data->GetH() )
         Bst->LeftChild = Insert(Bst->LeftChild, n);
     else
         Bst->RightChild = Insert(Bst->RightChild, n);
-    return Bst;    
+    return Bst;
+        
 }
 
 struct BST* BST_Search(struct BST* Bst, Node* n)
@@ -184,20 +188,24 @@ vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
     return v;
 }
 
-void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
+struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 {
+
     Node* CurrentNode = StartNode;
-    struct BST* ClosedSet = Insert(ClosedSet, CurrentNode);
+
+    struct BST* ClosedSet = NULL;
+    ClosedSet = Insert(ClosedSet, CurrentNode);
     priority_queue<Node*, vector<Node*>, Node> OpenSet;
 
+    cout << "STAGE 0 COMPLETE" << endl;
     do
     {
-        vector<Node*> v = SearchAdjacentNodes(g, CurrentNode);
-
         /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
-        for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
+        for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */
 
         vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
+
+        cout << "Adjacent Nodes found" << endl;
 
         for(int i = 0; i < neighbors.size(); i++)
         {
@@ -212,15 +220,25 @@ void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
                 }
             }
         }
+
+        cout << "OpenSet filled" << endl;
         
         if(OpenSet.empty())
             break;
         
         CurrentNode = LowestQueueNode(OpenSet);
-        OpenSet = DeleteQueueNode(OpenSet, CurrentNode);
+        cout << "OpenSet lowest H" << endl;
+        //OpenSet = DeleteQueueNode(OpenSet, CurrentNode);
+        cout << "OpenSet delete node" << endl;
         ClosedSet = Insert(ClosedSet, CurrentNode);
+        cout << "ClosedSet insert node" << endl;
 
-    } while (CurrentNode == EndNode);
+        int i =0;
+        cout << "STAGE " << i+1 << " COMPLETE" << endl;
+        
+    } while (CurrentNode != EndNode); 
+    
+    return ClosedSet;
 }
 
 int main(int argc, char *argv[]) {
@@ -231,25 +249,10 @@ int main(int argc, char *argv[]) {
     std::cout << endl;
 
     int Size = MainGrid.size();
-    
-    
-    //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
 
+    struct BST* Result = BestFirstSearch(MainGrid, MainGrid[0][0], MainGrid[4][4]);
 
-    priority_queue<Node*, vector<Node*>, Node> O;
-    O.push(new Node(NULL, 40));
-    O.push(new Node(NULL, 90));
-    O.push(new Node(NULL, 10));
-    O.push(new Node(NULL, 30));
+    Inorder(Result);
 
-    /*
-    O = DeleteQueueNode(O, new Node(NULL, 30));
-    while(!O.empty())
-    {
-        cout << O.top()->GetH() << endl;
-        O.pop();
-    }
-    */
-    
-    
+    cout << "Done";
 }
