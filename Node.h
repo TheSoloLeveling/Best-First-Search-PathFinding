@@ -1,3 +1,4 @@
+using namespace std;
 
 class Node
 {
@@ -16,4 +17,11 @@ class Node
         void SetParent(Node* Parent) {this->Parent = Parent;}
         void SetH(int H) {this->H = H;}
 
+        bool operator()(Node* a,Node* b)
+        {
+            return a->GetH() < b->GetH();
+        }
+
 };
+
+

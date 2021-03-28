@@ -43,9 +43,9 @@ struct BST* BST_Search(struct BST* Bst, Node* n)
     return BST_Search(Bst->LeftChild, n);
 }
 
-bool Queue_Search(priority_queue<Node*> p, Node* n)
+bool Queue_Search(priority_queue<Node*, vector<Node*>, Node> p, Node* n)
 {
-    priority_queue<Node*> temp = p;
+    priority_queue<Node*, vector<Node*>, Node> temp = p;
     while(!temp.empty())
     {
         if (temp.top()->GetH() == n->GetH())
@@ -53,6 +53,17 @@ bool Queue_Search(priority_queue<Node*> p, Node* n)
         temp.pop();
     }
     return false;
+}
+
+Node* LowestQueueNode(priority_queue<Node*, vector<Node*> , Node> o)
+{
+    Node* p;
+    while (!o.empty())
+    {
+        p = o.top();
+        o.pop();      
+    }
+    return p;
 }
 
 void Inorder(struct BST* p)
@@ -163,37 +174,44 @@ vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
 void BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 {
     Node* CurrentNode = StartNode;
-
-    vector<Node*> v = SearchAdjacentNodes(g, CurrentNode);
-
-    /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
-    for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
-
     struct BST* ClosedSet = Insert(ClosedSet, CurrentNode);
 
-    vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
-
-    priority_queue<Node*> OpenSet;
-
-    for(int i = 0; i < neighbors.size(); i++)
+    do
     {
-        if(BST_Search(ClosedSet, neighbors[i]) != NULL)
-            continue;
-        else
+        vector<Node*> v = SearchAdjacentNodes(g, CurrentNode);
+
+        /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
+        for(int j = 0; j < v.size(); j++) std::cout << v[j]->GetH() << " ";  */ 
+
+        priority_queue<Node*, vector<Node*>, Node> OpenSet;
+
+        vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
+
+        for(int i = 0; i < neighbors.size(); i++)
         {
-            neighbors[i]->SetParent(CurrentNode);
-            if(!Queue_Search(OpenSet, neighbors[i]))
+            if(BST_Search(ClosedSet, neighbors[i]) != NULL)
+                continue;
+            else
             {
-                OpenSet.push(neighbors[i]);
+                neighbors[i]->SetParent(CurrentNode);
+                if(!Queue_Search(OpenSet, neighbors[i]))
+                {
+                    OpenSet.push(neighbors[i]);
+                }
             }
         }
-    }
+        
+        if(OpenSet.empty())
+            break;
+        
+        CurrentNode = LowestQueueNode(OpenSet);
+        // remove current node from openset
+        ClosedSet = Insert(ClosedSet, CurrentNode);
 
-    //if(OpenSet.empty())
-       // break;
-    
-    
+    } while (CurrentNode == EndNode);
 }
+
+
 
 
 int main(int argc, char *argv[]) {
@@ -208,17 +226,13 @@ int main(int argc, char *argv[]) {
     
     //BestFirstSearch(MainGrid, MainGrid[1][1], MainGrid[Size-1][Size-1]);
 
-    priority_queue<Node*> O;
+/*
+    priority_queue<Node*, vector<Node*>, Node> O;
     O.push(new Node(NULL, 40));
     O.push(new Node(NULL, 90));
     O.push(new Node(NULL, 10));
     O.push(new Node(NULL, 30));
-    //std::cout << "Before : " << O.top()->GetH() << endl;
 
-    while (!O.empty())
-    {
-        std::cout << O.top()->GetH() << endl;
-        O.pop();
-    }
-    //std::cout << "After : " << O.top()->GetH();*/
+    std::cout << LowestQueueNode(O)->GetH();
+    */
 }
