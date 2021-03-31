@@ -4,14 +4,18 @@ class Node
 {
     private:
         int H;
+        int X;
+        int Y;
         Node* Parent;
 
     public:
         Node();
-        Node(Node* Parent, float H);
+        Node(int X, int Y);
         void Print();
 
         int GetH() {return this->H;}
+        int GetX() {return this->X;}
+        int GetY() {return this->Y;}
         Node* GetParent() {return this->Parent;}
 
         void SetParent(Node* Parent) {this->Parent = Parent;}

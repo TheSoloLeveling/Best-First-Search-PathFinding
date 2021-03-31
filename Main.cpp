@@ -21,24 +21,24 @@ struct BST* Insert(struct BST* Bst, Node* n)
     {
         struct BST* temp = (struct BST*)malloc(sizeof(struct BST));
         
-        temp->Data = new Node(NULL, n->GetH());
-        
+        temp->Data = new Node(n->GetX(), n->GetY());
+
         temp->LeftChild = temp->RightChild = NULL;
         
         return temp;
     }
     
+    
     if (n->GetH() < Bst->Data->GetH() )
         Bst->LeftChild = Insert(Bst->LeftChild, n);
     else
         Bst->RightChild = Insert(Bst->RightChild, n);
-    return Bst;
-        
+    return Bst;       
 }
 
 struct BST* BST_Search(struct BST* Bst, Node* n)
 {
-    if(Bst == NULL || Bst->Data->GetH() == n->GetH())
+    if(Bst == NULL || (Bst->Data->GetX() == n->GetX() && Bst->Data->GetY() == n->GetY()))
         return Bst;
 
     if(Bst->Data->GetH() < n->GetH())
@@ -47,40 +47,26 @@ struct BST* BST_Search(struct BST* Bst, Node* n)
     return BST_Search(Bst->LeftChild, n);
 }
 
-bool Queue_Search(priority_queue<Node*, vector<Node*>, Node> p, Node* n)
+int Vector_Search(vector<Node*> v, Node* n)
 {
-    priority_queue<Node*, vector<Node*>, Node> temp = p;
-    while(!temp.empty())
+    for(int i = 0; i < v.size(); i++)
     {
-        if (temp.top()->GetH() == n->GetH())
-            return true;
-        temp.pop();
+        if (v[i]->GetX() == n->GetX() && v[i]->GetY() == n->GetY() )
+            return i;
     }
-    return false;
+    return -1;
 }
 
-Node* LowestQueueNode(priority_queue<Node*, vector<Node*> , Node> o)
+Node* Vector_Min(vector<Node*> v)
 {
-    Node* p;
-    while (!o.empty())
+    Node* min = v[0];
+    for(int i = 0; i < v.size(); i++)
     {
-        p = o.top();
-        o.pop();      
+        if (v[i]->GetH() < min->GetH())
+            min = v[i];
     }
-    return p;
-}
 
-priority_queue<Node*, vector<Node*> , Node> DeleteQueueNode(priority_queue<Node*, vector<Node*> , Node> p, Node* n)
-{
-    priority_queue<Node*, vector<Node*>, Node> O;
-    while(!p.empty())
-    {
-        if (p.top()->GetH() == n->GetH())
-            p.pop();
-        O.push(p.top());
-        p.pop();
-    }
-    return O;
+    return min;
 }
 
 void Inorder(struct BST* p)
@@ -88,7 +74,7 @@ void Inorder(struct BST* p)
     if(p)
     {
         Inorder(p->LeftChild);
-        std::cout << p->Data->GetH() << " ";
+        cout << "(" << p->Data->GetX() << "," << p->Data->GetY() << ")-->";
         Inorder(p->RightChild);
     }
 }
@@ -114,7 +100,7 @@ vector<vector<Node*> > ConstructIntGrid()
         vector<Node*> v;
         for(int j = 0; j < size; j++)
         {
-            Node* data = new Node(NULL, Rand(1, 10));
+            Node* data = new Node(i, j);
             v.push_back(data);
         }
         grid.push_back(v);
@@ -131,7 +117,7 @@ void ShowGrid(vector<vector<Node*> > g)
     {
         for(int j = 0; j < Size; j++)
         {
-            cout << g[i][j]->GetH() << " ";
+            cout << "(" << g[i][j]->GetX() << "," << g[i][j]->GetY() << ")  ";
         }
         cout << "\n";
     }
@@ -190,14 +176,14 @@ vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
 
 struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* EndNode)
 {
-
+    
     Node* CurrentNode = StartNode;
 
     struct BST* ClosedSet = NULL;
+    
     ClosedSet = Insert(ClosedSet, CurrentNode);
-    priority_queue<Node*, vector<Node*>, Node> OpenSet;
+    vector<Node*> OpenSet;
 
-    cout << "STAGE 0 COMPLETE" << endl;
     do
     {
         /*std::cout << "Adjacent Nodes to the Current Node " << CurrentNode->GetH() << " are : ";   //For Debug
@@ -205,7 +191,6 @@ struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* End
 
         vector<Node*> neighbors = SearchAdjacentNodes(g, CurrentNode);
 
-        cout << "Adjacent Nodes found" << endl;
 
         for(int i = 0; i < neighbors.size(); i++)
         {
@@ -214,27 +199,24 @@ struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* End
             else
             {
                 neighbors[i]->SetParent(CurrentNode);
-                if(!Queue_Search(OpenSet, neighbors[i]))
+                int distance = abs(neighbors[i]->GetX() - EndNode->GetX()) + abs(neighbors[i]->GetY() - EndNode->GetY());
+                neighbors[i]->SetH(distance);
+                if(Vector_Search(OpenSet, neighbors[i]) == -1)
                 {
-                    OpenSet.push(neighbors[i]);
+                    OpenSet.push_back(neighbors[i]);
                 }
             }
         }
 
-        cout << "OpenSet filled" << endl;
-        
         if(OpenSet.empty())
             break;
         
-        CurrentNode = LowestQueueNode(OpenSet);
-        cout << "OpenSet lowest H" << endl;
-        //OpenSet = DeleteQueueNode(OpenSet, CurrentNode);
-        cout << "OpenSet delete node" << endl;
+        CurrentNode = Vector_Min(OpenSet);
+       
+        OpenSet.erase(OpenSet.begin() + Vector_Search(OpenSet, CurrentNode));
+      
         ClosedSet = Insert(ClosedSet, CurrentNode);
-        cout << "ClosedSet insert node" << endl;
-
-        int i =0;
-        cout << "STAGE " << i+1 << " COMPLETE" << endl;
+     
         
     } while (CurrentNode != EndNode); 
     
@@ -244,15 +226,30 @@ struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* End
 int main(int argc, char *argv[]) {
 
     vector<vector<Node*> > MainGrid = ConstructIntGrid();
-    
     ShowGrid(MainGrid);
     std::cout << endl;
 
-    int Size = MainGrid.size();
-
-    struct BST* Result = BestFirstSearch(MainGrid, MainGrid[0][0], MainGrid[4][4]);
-
+    int costMin = 0;
+    int i1, j1, i2, j2;
+    cout  << "======================== BEST FIRST SEARCH ALGORITHM PROGRAM =========================" << endl;
+    cout  << "Enter Start Node" << endl;
+    cout  << "Enter X : " << endl;
+    cin >> i1;
+    cout  << "Enter Y : " << endl;
+    cin >> j1;
+    cout  << "Enter End Node" << endl;
+    cout  << "Enter X : " << endl;
+    cin >> i2;
+    cout  << "Enter Y : " << endl;
+    cin >> j2;
+    
+    struct BST* Result = BestFirstSearch(MainGrid, MainGrid[i1][j1], MainGrid[i2][j2]);
+    
+    cout << "Route : ";
     Inorder(Result);
-
-    cout << "Done";
+    cout << "END";
+    std::cout << endl;
+    
+        
+   
 }

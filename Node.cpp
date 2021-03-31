@@ -7,10 +7,11 @@ Node::Node()
     this->Parent = NULL;
 }
 
-Node::Node(Node* Parent, float H)
+Node::Node(int X, int Y)
 {
-    this->Parent = Parent;
-    this->H = H;
+    this->H = 0;
+    this->X = X;
+    this->Y = Y;
 }
 
 void Node::Print() 
