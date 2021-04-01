@@ -3,6 +3,7 @@
 #include <vector>
 #include <time.h>
 #include <queue>
+#include <math.h>
 #include "Node.h"
 
 
@@ -145,6 +146,34 @@ vector<Node*> SearchAdjacentNodes(vector<vector<Node*> > g, Node* n)
 
     try
     {
+        g.at(In+1).at(Jn+1);
+        v.push_back(g[In+1][Jn+1]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In-1).at(Jn+1);
+        v.push_back(g[In-1][Jn+1]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In+1).at(Jn-1);
+        v.push_back(g[In+1][Jn-1]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
+        g.at(In-1).at(Jn-1);
+        v.push_back(g[In-1][Jn-1]);
+    }
+    catch(const std::exception& e) {}
+
+    try
+    {
         g.at(In+1).at(Jn);
         v.push_back(g[In+1][Jn]);
     }
@@ -199,7 +228,7 @@ struct BST* BestFirstSearch(vector<vector<Node*> > g, Node* StartNode, Node* End
             else
             {
                 neighbors[i]->SetParent(CurrentNode);
-                int distance = abs(neighbors[i]->GetX() - EndNode->GetX()) + abs(neighbors[i]->GetY() - EndNode->GetY());
+                int distance = sqrt(pow(neighbors[i]->GetX() - EndNode->GetX(), 2) + pow(neighbors[i]->GetY() - EndNode->GetY(), 2));
                 neighbors[i]->SetH(distance);
                 if(Vector_Search(OpenSet, neighbors[i]) == -1)
                 {
